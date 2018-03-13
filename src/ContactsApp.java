@@ -2,6 +2,8 @@ import util.Input;
 
 import java.io.IOException;
 import java.nio.file.*;
+import java.text.NumberFormat;
+import java.text.ParsePosition;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -91,7 +93,6 @@ public class ContactsApp {
             }
         }
     }
-
     protected static void createDirectory() {
         try {
             Files.createDirectories(dataDirectory);
@@ -100,7 +101,6 @@ public class ContactsApp {
             e.printStackTrace();
         }
     }
-
     protected static void createDataFile() {
         try {
             Files.createFile(dataFile);
@@ -109,7 +109,6 @@ public class ContactsApp {
             e.printStackTrace();
         }
     }
-
     protected static void viewContacts() {
         if (contacts.isEmpty()) {
             System.out.println("There are currently no contacts");
@@ -129,15 +128,22 @@ public class ContactsApp {
     protected static String getNewContactName() {
         Input input = new Input();
         String newName;
-        boolean confirm = false;
+        boolean confirm;
         System.out.print("New contact name: > ");
         newName = input.getString();
-        System.out.print("Name: \"" + newName + " is correct. Confirm? (yes/no) > ");
-        confirm = input.yesNo();
-        if (!confirm) {
-            getNewContactName();
+        if (isLetters(newName)) {
+            System.out.print("Name: \"" + newName + "\" is correct. Confirm? (yes/no) > ");
+            confirm = input.yesNo();
+            if (confirm) {
+                return newName;
+            } else if (!confirm) {
+                return getNewContactName();
+            }
+        } else if (isLetters(newName)) {
+            System.out.println("Only letters are valid!");
+            return getNewContactName();
         }
-        return newName;
+        return "Broken :(";
     }
     protected static String getPhoneNumber () {
         Input input = new Input();
@@ -145,12 +151,51 @@ public class ContactsApp {
         boolean confirm;
         System.out.print("New contact number: > ");
         newPhone = input.getString();
-        System.out.println("New contact number: " + newPhone + "\nConfirm? (yes/no) >");
-        confirm = input.yesNo();
-        if (!confirm) {
-            getPhoneNumber();
+        if (!isNumbers(newPhone)) {
+            System.out.println("Only numbers are valid, either 7 or 10 digits!");
+            return getPhoneNumber();
+        } else {
+            System.out.println("New contact number: " + newPhone + "\nConfirm? (yes/no) >");
+            confirm = input.yesNo();
+            if (!confirm) {
+                getPhoneNumber();
+            } else {
+                return formatNumber(newPhone);
+            }
         }
-        return String.valueOf(newPhone).replaceFirst("(\\d{3})(\\d{3})(\\d+)", "($1)-$2-$3");
+        return "Broken";
+    }
+    public static boolean isNumbers(String phone)
+    {
+        if (phone.length() == 7 || phone.length() == 10) {
+            NumberFormat formatter = NumberFormat.getInstance();
+            ParsePosition position = new ParsePosition(0);
+            formatter.parse(phone, position);
+            return phone.length() == position.getIndex();
+        } else {
+            return false;
+        }
+    }
+    public static String formatNumber (String phone) {
+        if (phone.length() == 7) {
+            return String.valueOf(phone).replaceFirst("(\\d{3})(\\d+)","$1-$2");
+        } else if (phone.length() == 10) {
+            return String.valueOf(phone).replaceFirst("(\\d{3})(\\d{3})(\\d+)", "($1)-$2-$3");
+        } else {
+            System.out.println("Broken in formatNumber!!! HELP!!");
+            return "broken";
+        }
+    }
+    public static boolean isLetters( String str ) {
+        int counter = 0;
+        for (char c : str.toCharArray()) {
+            if (Character.isLetter(c) || c == ' ') {
+                counter += 1;
+            }
+        }
+        if (counter != str.length()) {
+            return false;
+        } else return true;
     }
     public static void createContact(String name, String number) {
         Contact contact = new Contact();
@@ -163,8 +208,9 @@ public class ContactsApp {
         Input input = new Input();
         System.out.print("Contact name: > ");
         String search = input.getString();
+        search = search.toLowerCase();
         for (Contact contact : contacts) {
-            if (contact.getName().equalsIgnoreCase(search)) {
+            if (String.valueOf(contact.getName()).contains(search)) {
                 System.out.println(contact.getName());
                 entriesMatching++;
             }
