@@ -1,8 +1,4 @@
-
-public class Alexcontactsmanager {
-
-
-    package util;
+package util;
 
 import java.io.FileWriter;
 import java.util.Scanner;
@@ -11,13 +7,13 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.io.IOException;
 
-    public class FileIO {
+    public class Alexcontactsmanager {
         private Scanner scanner;
         private List contacts;
 
         public static void main(String[] args) {
             Input Input = new Input();
-            FileIO FileIO = new FileIO();
+            Alexcontactsmanager FileIO = new Alexcontactsmanager();
 //Read contents from contacts file
             String fileName = "data/contacts.txt";
             if (! Files.exists(Paths.get(fileName))) {
@@ -41,7 +37,7 @@ import java.io.IOException;
             } while(userInput != 5);
         }
 
-        public FileIO() {
+        public Alexcontactsmanager() {
             this.scanner = new Scanner(System.in);
         }
 
@@ -88,6 +84,7 @@ import java.io.IOException;
         public void searchContacts() {
             System.out.println("Enter name to search: ");
             String userSearch = scanner.nextLine();
+            userSearch = userSearch.toLowerCase();
             for (Object contact : contacts) {
                 if (String.valueOf(contact).contains(userSearch)) {
                     System.out.println(contact);
@@ -172,4 +169,4 @@ import java.io.IOException;
 
 
 
-}
+

@@ -67,7 +67,7 @@ public class ContactsApp {
         System.out.println("2. Add a new contact");
         System.out.println("3. Search for a contact by name");
         System.out.println("4. Delete an existing contact");
-        System.out.println("5. Exit");
+        System.out.println("5. Save and Exit");
         System.out.println("Enter an option (1, 2, 3, 4, or 5) > ");
         int choice = input.getInt(1, 5);
         switch (choice) {
@@ -113,11 +113,20 @@ public class ContactsApp {
         if (contacts.isEmpty()) {
             System.out.println("There are currently no contacts");
         } else {
-            for (Contact contact : contacts) {
-                System.out.println(contact.getName() + " " + contact.getPhone());
+                // Print the list objects in tabular format.
+                System.out.println("|----------------------------------------------------|");
+                System.out.printf("%-5s %-18s %-5s %-20s %-5s","|", "Contact Name", "++", "Contact Number"," |");
+                System.out.println();
+                System.out.println("|----------------------------------------------------|");
+                for(Contact contact : contacts){
+                    System.out.format("%-5s %-18s %-5s %-20s %-5s","|>", contact.getName(),"<>", contact.getPhone(), "<|");
+                    System.out.println();
+                }
+                System.out.println("|----------------------------------------------------|");
             }
-        }
-    }
+            }
+
+
     protected static void makeContact() {
         String name = getNewContactName();
         String number = getPhoneNumber();
