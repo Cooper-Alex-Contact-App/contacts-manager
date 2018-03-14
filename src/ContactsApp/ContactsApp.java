@@ -205,9 +205,7 @@ public class ContactsApp {
                 break;
             }
         }
-        if (counter != str.length()) {
-            return false;
-        } else return true;
+        return counter == str.length();
     }
     private String getPhoneNumber () {
         Input input = new Input();
