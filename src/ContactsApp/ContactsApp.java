@@ -22,8 +22,13 @@ public class ContactsApp {
         app.initializeData();
         app.options();
     }
-
-    protected void initializeData() {
+    /*
+    *
+    * Main only runs init data and load file. Once options is called, all methods with associated functions call upon
+    * the function with the name most similar to their purpose.
+    *
+    */
+    private void initializeData () {
         if (Files.notExists(dataDirectory)) {
             Input input = new Input();
             System.out.print("Data directory \"" + dataDirectory.toAbsolutePath() +
@@ -50,7 +55,7 @@ public class ContactsApp {
             loadFile();
         }
     }
-    private void loadFile() {
+    private void loadFile () {
         try {
             List<String> loadContacts = Files.readAllLines(dataFile);
             for (String item : loadContacts) {
@@ -72,7 +77,7 @@ public class ContactsApp {
             e.printStackTrace();
         }
     }
-    private void options() {
+    private void options () {
         Input input = new Input();
         System.out.println("\n1. View contacts");
         System.out.println("2. Add a new contact");
@@ -104,7 +109,7 @@ public class ContactsApp {
             }
         }
     }
-    private void createDirectory() {
+    private void createDirectory () {
         try {
             Files.createDirectories(dataDirectory);
             System.out.println("Creating \"" + dataDirectory.toAbsolutePath() + "\"");
@@ -112,7 +117,7 @@ public class ContactsApp {
             e.printStackTrace();
         }
     }
-    private void createDataFile() {
+    private void createDataFile () {
         try {
             Files.createFile(dataFile);
             System.out.println("Creating data file\"" + dataFile.toAbsolutePath() + "\"...");
@@ -120,7 +125,7 @@ public class ContactsApp {
             e.printStackTrace();
         }
     }
-    private void viewContacts() {
+    private void viewContacts () {
         if (contacts.isEmpty()) {
             System.out.println("There are currently no contacts");
         } else {
@@ -136,16 +141,22 @@ public class ContactsApp {
                 System.out.println("|----------------------------------------------------|");
             }
     }
-
-
-    private void makeContact() {
+    /*
+    *
+    * For producing a contact, we are going to ask makeContact() to:
+    *   * Get a name and verify the data is good
+    *   * Get a phone number, either in the 7 or 10-digit format
+    *   * Create a Contact object with those properties of names and numbers.
+    *
+    */
+    private void makeContact () {
         String name = getNewContactName();
         String number = getPhoneNumber();
         createContact(name, number);
         viewContacts();
         options();
     }
-    private String getNewContactName() {
+    private String getNewContactName () {
         Input input = new Input();
         String newName;
         boolean confirm;
@@ -185,8 +196,7 @@ public class ContactsApp {
         }
         return "Broken";
     }
-    private boolean isNumbers(String phone)
-    {
+    private boolean isNumbers (String phone) {
         if (phone.length() == 7 || phone.length() == 10) {
             NumberFormat formatter = NumberFormat.getInstance();
             ParsePosition position = new ParsePosition(0);
@@ -206,7 +216,7 @@ public class ContactsApp {
             return "broken";
         }
     }
-    private boolean isLetters( String str ) {
+    private boolean isLetters (String str) {
         int counter = 0;
         for (char c : str.toCharArray()) {
             if (Character.isLetter(c) || c == ' ') {
@@ -217,7 +227,7 @@ public class ContactsApp {
             return false;
         } else return true;
     }
-    private void createContact(String name, String number) {
+    private void createContact (String name, String number) {
         Contact contact = new Contact();
         contact.setName(name);
         contact.setPhone(number);
@@ -281,6 +291,14 @@ public class ContactsApp {
         }
         options();
     }
+    /*
+    *
+    *   The only time data is saved is at exit; original design was that the file would be saved to and read from more
+    *   often, using only the ArrayList of Contacts to interact with data in real-time.
+    *   IF ONE DOES NOT EXIT PROPERLY, ONE DOES NOT SAVE!!!!
+    *   ~ I no longer feel bad. You've been warned - Cooper ~
+    *
+    */
     private void saveContactFile() {
         List<String> contactsAsStrings = new ArrayList<>();
         System.out.println("Saving contact file...");
@@ -294,6 +312,7 @@ public class ContactsApp {
             e.printStackTrace();
         }
     }
+    /* What did I say about the exit method? Oh, if you don't exit, you don't save. */
     private void exit () {
         saveContactFile();
         System.exit(0);
