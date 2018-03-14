@@ -24,7 +24,7 @@ public class ContactsApp {
     }
     /*
     *
-    * Main only runs init data and load file. Once options is called, all methods with associated functions call upon
+    * Main only runs init data and load file. Once options() is called, all methods with associated functions call upon
     * the function with the name most similar to their purpose.
     *
     */
@@ -60,7 +60,17 @@ public class ContactsApp {
             List<String> loadContacts = Files.readAllLines(dataFile);
             for (String item : loadContacts) {
                 String[] words = item.split("\\W+");
-                if (words.length == 4) {
+                if (words.length == 2) {
+                    String name = words[0];
+                    String number = words[1];
+                    number = String.valueOf(number).replaceFirst("(\\d{3})(\\d+)","$1-$2");
+                    createContact(name, number);
+                } else if (words.length == 3) {
+                    String name = words[0];
+                    String number = words[1] + words[2];
+                    number = String.valueOf(number).replaceFirst("(\\d{3})(\\d+)","$1-$2");
+                    createContact(name, number);
+                } else if (words.length == 4) {
                     String name = words[0] + " " + words[1];
                     String number = words[2] + words[3];
                     number = String.valueOf(number).replaceFirst("(\\d{3})(\\d+)","$1-$2");
@@ -70,8 +80,10 @@ public class ContactsApp {
                     String number = words[2]+words[3]+words[4];
                     number = String.valueOf(number).replaceFirst("(\\d{3})(\\d{3})(\\d+)", "($1) $2-$3");
                     createContact(name, number);
+                } else {
+                    System.out.println("How did you even get to this part of the code? Tell the devs that loadContacts is broken!!!");
+                    System.exit(1);
                 }
-
             }
         } catch (IOException e) {
             e.printStackTrace();
