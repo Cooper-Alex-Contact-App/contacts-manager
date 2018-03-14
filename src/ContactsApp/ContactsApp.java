@@ -151,7 +151,7 @@ public class ContactsApp {
                 System.out.println("|----------------------------------------------------|");
                 for(Contact contact : contacts){
                     if (contact.getPhone().length() == 8) {
-                        System.out.format("%-5s %-18s %-5s %-20s %-5s","|>", contact.getName(),"<>", contact.getPhone(), "<|");
+                        System.out.format("%-5s %-18s %-11s %-14s %-5s","|>", contact.getName(),"<>", contact.getPhone(), "<|");
                         System.out.println();
                     } else if (contact.getPhone().length() == 14) {
                         System.out.format("%-5s %-18s %-5s %-20s %-5s","|>", contact.getName(),"<>", contact.getPhone(), "<|");
