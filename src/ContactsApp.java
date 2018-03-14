@@ -52,10 +52,18 @@ public class ContactsApp {
             List<String> loadContacts = Files.readAllLines(dataFile);
             for (String item : loadContacts) {
                 String[] words = item.split("\\W+");
-                String name = words[0] + " " + words[1];
-                String number = words[2]+words[3]+words[4];
-                number = String.valueOf(number).replaceFirst("(\\d{3})(\\d{3})(\\d+)", "($1)-$2-$3");
-                createContact(name, number);
+                if (words.length == 4) {
+                    String name = words[0] + " " + words[1];
+                    String number = words[2] + words[3];
+                    number = String.valueOf(number).replaceFirst("(\\d{3})(\\d+)","$1-$2");
+                    createContact(name, number);
+                } else if (words.length == 5) {
+                    String name = words[0] + " " + words[1];
+                    String number = words[2]+words[3]+words[4];
+                    number = String.valueOf(number).replaceFirst("(\\d{3})(\\d{3})(\\d+)", "($1) $2-$3");
+                    createContact(name, number);
+                }
+
             }
         } catch (IOException e) {
             e.printStackTrace();
