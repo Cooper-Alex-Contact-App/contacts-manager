@@ -28,6 +28,9 @@ public class ContactsApp {
     * the function with the name most similar to their purpose.
     *
     */
+    private String errorFormat (String string) {
+        return "\033[01;31m" + string + "\033[0m";
+    }
     private void initializeData () {
         if (Files.notExists(dataDirectory)) {
             Input input = new Input();
@@ -37,7 +40,7 @@ public class ContactsApp {
             if (choice) {
                 createDirectory();
             } else {
-                System.out.println("If there is no data file, then there is no reason to continue the program.");
+                System.out.println(errorFormat("If there is no data file, then there is no reason to continue the program."));
                 exit();
             }
         } else {
@@ -81,7 +84,7 @@ public class ContactsApp {
                     number = String.valueOf(number).replaceFirst("(\\d{3})(\\d{3})(\\d+)", "($1) $2-$3");
                     createContact(name, number);
                 } else {
-                    System.out.println("How did you even get to this part of the code? Tell the devs that loadContacts is broken!!!");
+                    System.out.println(errorFormat("How did you even get to this part of the code? Tell the devs that loadContacts is broken!!!"));
                     System.exit(1);
                 }
             }
@@ -116,7 +119,7 @@ public class ContactsApp {
                 exit();
                 break;
             default: {
-                System.out.println("Sorry, that is not a valid option. Please try again.");
+                System.out.println(errorFormat("Sorry, that is not a valid option. Please try again."));
                 options();
             }
         }
@@ -139,7 +142,7 @@ public class ContactsApp {
     }
     private void viewContacts () {
         if (contacts.isEmpty()) {
-            System.out.println("There are currently no contacts");
+            System.out.println(errorFormat("There are currently no contacts"));
         } else {
                 // Print the list objects in tabular format.
                 System.out.println("|----------------------------------------------------|");
@@ -147,8 +150,13 @@ public class ContactsApp {
                 System.out.println();
                 System.out.println("|----------------------------------------------------|");
                 for(Contact contact : contacts){
-                    System.out.format("%-5s %-18s %-5s %-20s %-5s","|>", contact.getName(),"<>", contact.getPhone(), "<|");
-                    System.out.println();
+                    if (contact.getPhone().length() == 8) {
+                        System.out.format("%-5s %-18s %-5s %-20s %-5s","|>", contact.getName(),"<>", contact.getPhone(), "<|");
+                        System.out.println();
+                    } else if (contact.getPhone().length() == 14) {
+                        System.out.format("%-5s %-18s %-5s %-20s %-5s","|>", contact.getName(),"<>", contact.getPhone(), "<|");
+                        System.out.println();
+                    }
                 }
                 System.out.println("|----------------------------------------------------|");
             }
@@ -179,14 +187,27 @@ public class ContactsApp {
             confirm = input.yesNo();
             if (confirm) {
                 return newName;
-            } else if (!confirm) {
+            } else {
                 return getNewContactName();
             }
-        } else if (isLetters(newName)) {
-            System.out.println("Only letters are valid!");
+        } else if (!isLetters(newName)) {
+            System.out.println(errorFormat("Only letters are valid!"));
             return getNewContactName();
         }
-        return "Broken :(";
+        return errorFormat("Tell the devs that getNewContactName() is broken!");
+    }
+    private boolean isLetters (String str) {
+        int counter = 0;
+        for (char c : str.toCharArray()) {
+            if (Character.isLetter(c) || c == ' ') {
+                counter += 1;
+            } else if (Character.isDigit(c)) {
+                break;
+            }
+        }
+        if (counter != str.length()) {
+            return false;
+        } else return true;
     }
     private String getPhoneNumber () {
         Input input = new Input();
@@ -195,7 +216,7 @@ public class ContactsApp {
         System.out.print("New contact number: > ");
         newPhone = input.getString();
         if (!isNumbers(newPhone)) {
-            System.out.println("Only numbers are valid, either 7 or 10 digits!");
+            System.out.println(errorFormat("Only numbers are valid, either 7 or 10 digits!"));
             return getPhoneNumber();
         } else {
             System.out.println("New contact number: " + newPhone + "\nConfirm? (yes/no) >");
@@ -206,7 +227,7 @@ public class ContactsApp {
                 return formatNumber(newPhone);
             }
         }
-        return "Broken";
+        return errorFormat("Please tell the devs that getPhoneNumber() is broken!");
     }
     private boolean isNumbers (String phone) {
         if (phone.length() == 7 || phone.length() == 10) {
@@ -224,20 +245,9 @@ public class ContactsApp {
         } else if (phone.length() == 10) {
             return String.valueOf(phone).replaceFirst("(\\d{3})(\\d{3})(\\d+)", "($1)-$2-$3");
         } else {
-            System.out.println("Broken in formatNumber!!! HELP!!");
+            System.out.println("Please tell the devs that formatNumber() is broken!");
             return "broken";
         }
-    }
-    private boolean isLetters (String str) {
-        int counter = 0;
-        for (char c : str.toCharArray()) {
-            if (Character.isLetter(c) || c == ' ') {
-                counter += 1;
-            }
-        }
-        if (counter != str.length()) {
-            return false;
-        } else return true;
     }
     private void createContact (String name, String number) {
         Contact contact = new Contact();
