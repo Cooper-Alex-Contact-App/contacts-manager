@@ -1,3 +1,5 @@
+package ContactsApp;
+
 public class Contact {
     private String name, phone;
     protected Contact (String name, String phone) {

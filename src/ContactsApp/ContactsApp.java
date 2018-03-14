@@ -1,3 +1,5 @@
+package ContactsApp;
+
 import util.Input;
 
 import java.io.IOException;
@@ -16,11 +18,12 @@ public class ContactsApp {
     private static Path dataFile = Paths.get(directory, filename);
 
     public static void main(String[] args) {
-        initializeData();
-        options();
+        ContactsApp app = new ContactsApp();
+        app.initializeData();
+        app.options();
     }
 
-    protected static void initializeData() {
+    protected void initializeData() {
         if (Files.notExists(dataDirectory)) {
             Input input = new Input();
             System.out.print("Data directory \"" + dataDirectory.toAbsolutePath() +
@@ -47,7 +50,7 @@ public class ContactsApp {
             loadFile();
         }
     }
-    public static void loadFile() {
+    private void loadFile() {
         try {
             List<String> loadContacts = Files.readAllLines(dataFile);
             for (String item : loadContacts) {
@@ -69,7 +72,7 @@ public class ContactsApp {
             e.printStackTrace();
         }
     }
-    public static void options() {
+    private void options() {
         Input input = new Input();
         System.out.println("\n1. View contacts");
         System.out.println("2. Add a new contact");
@@ -101,7 +104,7 @@ public class ContactsApp {
             }
         }
     }
-    protected static void createDirectory() {
+    private void createDirectory() {
         try {
             Files.createDirectories(dataDirectory);
             System.out.println("Creating \"" + dataDirectory.toAbsolutePath() + "\"");
@@ -109,7 +112,7 @@ public class ContactsApp {
             e.printStackTrace();
         }
     }
-    protected static void createDataFile() {
+    private void createDataFile() {
         try {
             Files.createFile(dataFile);
             System.out.println("Creating data file\"" + dataFile.toAbsolutePath() + "\"...");
@@ -117,7 +120,7 @@ public class ContactsApp {
             e.printStackTrace();
         }
     }
-    protected static void viewContacts() {
+    private void viewContacts() {
         if (contacts.isEmpty()) {
             System.out.println("There are currently no contacts");
         } else {
@@ -132,17 +135,17 @@ public class ContactsApp {
                 }
                 System.out.println("|----------------------------------------------------|");
             }
-            }
+    }
 
 
-    protected static void makeContact() {
+    private void makeContact() {
         String name = getNewContactName();
         String number = getPhoneNumber();
         createContact(name, number);
         viewContacts();
         options();
     }
-    protected static String getNewContactName() {
+    private String getNewContactName() {
         Input input = new Input();
         String newName;
         boolean confirm;
@@ -162,7 +165,7 @@ public class ContactsApp {
         }
         return "Broken :(";
     }
-    protected static String getPhoneNumber () {
+    private String getPhoneNumber () {
         Input input = new Input();
         String newPhone;
         boolean confirm;
@@ -182,7 +185,7 @@ public class ContactsApp {
         }
         return "Broken";
     }
-    public static boolean isNumbers(String phone)
+    private boolean isNumbers(String phone)
     {
         if (phone.length() == 7 || phone.length() == 10) {
             NumberFormat formatter = NumberFormat.getInstance();
@@ -193,7 +196,7 @@ public class ContactsApp {
             return false;
         }
     }
-    public static String formatNumber (String phone) {
+    private String formatNumber (String phone) {
         if (phone.length() == 7) {
             return String.valueOf(phone).replaceFirst("(\\d{3})(\\d+)","$1-$2");
         } else if (phone.length() == 10) {
@@ -203,7 +206,7 @@ public class ContactsApp {
             return "broken";
         }
     }
-    public static boolean isLetters( String str ) {
+    private boolean isLetters( String str ) {
         int counter = 0;
         for (char c : str.toCharArray()) {
             if (Character.isLetter(c) || c == ' ') {
@@ -214,20 +217,20 @@ public class ContactsApp {
             return false;
         } else return true;
     }
-    public static void createContact(String name, String number) {
+    private void createContact(String name, String number) {
         Contact contact = new Contact();
         contact.setName(name);
         contact.setPhone(number);
         contacts.add(contact);
     }
-    protected static void searchContact () {
+    private void searchContact () {
         int entriesMatching = 0;
         Input input = new Input();
         System.out.print("Contact name: > ");
         String search = input.getString();
         search = search.toLowerCase();
         for (Contact contact : contacts) {
-            if (String.valueOf(contact.getName()).contains(search)) {
+            if (contact.getName().toLowerCase().contains(search)) {
                 System.out.println(contact.getName());
                 entriesMatching++;
             }
@@ -243,7 +246,7 @@ public class ContactsApp {
             options();
         }
     }
-    protected static void deleteContact () {
+    private void deleteContact () {
         if (contacts.isEmpty()) {
             System.out.println("There are no contacts, unable to delete. Trying adding contacts first.");
             options();
@@ -278,7 +281,7 @@ public class ContactsApp {
         }
         options();
     }
-    protected static void saveContactFile() {
+    private void saveContactFile() {
         List<String> contactsAsStrings = new ArrayList<>();
         System.out.println("Saving contact file...");
         for (Contact contact : contacts) {
@@ -291,7 +294,7 @@ public class ContactsApp {
             e.printStackTrace();
         }
     }
-    private static void exit () {
+    private void exit () {
         saveContactFile();
         System.exit(0);
     }
